@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Přepínač teploty</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #e6f2ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+            background-size: cover;
+            background-position: center;
+            transition: background 0.5s ease, background-image 0.5s ease;
+        }
+        .form-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+            position: relative;
+        }
+        h1 {
+            color: #005bb5;
+            font-size: 24px;
+        }
+        .input-container {
+            margin-bottom: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #005bb5;
+            box-shadow: 0 0 8px rgba(0, 91, 181, 0.5);
+        }
+        button {
+            background-color: #005bb5;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #004085;
+        }
+        .temperature-output {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        /* Pseudo-element pro přidání ikon do pozadí */
+        .season-icon {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            opacity: 0.1;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        /* Ikona pro zimu */
+        .winter-icon {
+            background-image: url('https://img.icons8.com/ios/452/snowflake.png');
+            background-size: contain;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* Ikona pro podzim */
+        .autumn-icon {
+            background-image: url('https://img.icons8.com/ios/452/leaf.png');
+            background-size: contain;
+            top: 40px;
+            right: 10px;
+        }
+        /* Ikona pro jaro */
+        .spring-icon {
+            background-image: url('https://img.icons8.com/ios/452/spring.png');
+            background-size: contain;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        /* Ikona pro léto */
+        .summer-icon {
+            background-image: url('https://img.icons8.com/ios/452/sun.png');
+            background-size: contain;
+            bottom: 40px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Přepínač teploty</h1>
+        <div class="input-container">
+            <label for="tempInput">Zadejte hodnotu:</label>
+            <input type="number" id="tempInput" placeholder="Zadejte teplotu" oninput="convertTemperature()">
+        </div>
+        <div class="input-container">
+            <label for="unitSelector">Vyberte jednotku:</label>
+            <select id="unitSelector" onchange="convertTemperature()">
+                <option value="Celsius">Celsius (°C)</option>
+                <option value="Fahrenheit">Fahrenheit (°F)</option>
+            </select>
+        </div>
+        <button onclick="convertTemperature()">Přepočítat</button>
+        <div class="temperature-output" id="output">
+            <!-- Výsledek se zobrazí zde -->
+        </div>
+        <!-- Sezonní ikony podle teploty -->
+        <div id="seasonIcon" class="season-icon"></div>
+    </div>
+
+    <script>
+        function convertTemperature() {
+            const tempInput = document.getElementById('tempInput').value;
+            const unit = document.getElementById('unitSelector').value;
+            let result = '';
+            let backgroundColor = '';
+            let seasonIcon = '';
+
+            if (unit === 'Celsius') {
+                if (tempInput !== '') {
+                    result = (tempInput * 9 / 5) + 32;
+                    document.getElementById('output').innerText = `${tempInput} °C = ${result.toFixed(2)} °F`;
+                }
+            } else if (unit === 'Fahrenheit') {
+                if (tempInput !== '') {
+                    result = (tempInput - 32) * 5 / 9;
+                    document.getElementById('output').innerText = `${tempInput} °F = ${result.toFixed(2)} °C`;
+                }
+            }
+
+            // Dynamické pozadí a ikony podle teploty
+            if (tempInput !== '') {
+                const temp = parseFloat(tempInput);
+
+                if (temp <= 0) {
+                    backgroundColor = 'linear-gradient(to bottom, #a3c2ff, #003366)'; // Zima (modrá)
+                    seasonIcon = 'winter-icon';
+                } else if (temp <= 10) {
+                    backgroundColor = 'linear-gradient(to bottom, #ffcc80, #ff8000)'; // Podzim (oranžová)
+                    seasonIcon = 'autumn-icon';
+                } else if (temp <= 25) {
+                    backgroundColor = 'linear-gradient(to bottom, #b2e0a5, #80b33e)'; // Jaro (zelená)
+                    seasonIcon = 'spring-icon';
+                } else {
+                    backgroundColor = 'linear-gradient(to bottom, #ffcc00, #ff3300)'; // Léto (žlutá, červená)
+                    seasonIcon = 'summer-icon';
+                }
+
+                document.body.style.background = backgroundColor;
+                document.getElementById('seasonIcon').className = 'season-icon ' + seasonIcon;
+            }
+        }
+    </script>
+</body>
+</html>
